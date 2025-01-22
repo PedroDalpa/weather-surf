@@ -10,21 +10,12 @@
     "rootDir": ".",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@src/*": [
-        "./src/*"
-      ],
-      "@test/*": [
-        "./test/*"
-      ]
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ],
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
