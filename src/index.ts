@@ -1,7 +1,5 @@
-
-
 function main() {
-  console.log(__dirname)
+  console.log('teste')
 }
 
 main()
