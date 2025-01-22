@@ -9,7 +9,7 @@ export class SetupServer extends Server {
     super()
   }
 
-  public async init(): Promise<void>{
+  public async init(): Promise<void> {
     this.setupExpress()
     this.setupControllers()
   }
