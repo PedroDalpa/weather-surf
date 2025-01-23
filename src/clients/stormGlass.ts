@@ -32,7 +32,7 @@ export interface ForecastPoint {
 }
 
 interface StormGlassError {
-  response: any
+  response: HTTPUtil.Response
 }
 
 export class ClientRequestError extends InternalError {
@@ -73,10 +73,7 @@ export class StormGlass {
 
       return this.normalizeResponse(response.data)
     } catch (err) {
-      if (
-        (err as StormGlassError).response &&
-        (err as StormGlassError).response.status
-      ) {
+      if (HTTPUtil.Request.isRequestError(err as HTTPUtil.RequestError)) {
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify((err as StormGlassError).response.data)} Code: ${
             (err as StormGlassError).response.status
