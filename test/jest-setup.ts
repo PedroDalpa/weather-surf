@@ -1,3 +1,4 @@
+import { Beach } from '@src/models/beach'
 import { SetupServer } from '../src/server'
 import supertest from 'supertest'
 
@@ -8,4 +9,7 @@ beforeAll(async () => {
   global.testRequest = supertest(server.getApp())
 })
 
-afterAll(async () => await server.close())
+afterAll(async () => {
+  await Beach.deleteMany({})
+  await server.close()
+})
