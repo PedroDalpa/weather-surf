@@ -5,8 +5,11 @@ import bodyParser from 'body-parser'
 import { ForecastController } from './controllers/forecast'
 import { connectDB, disconnectDB } from './database'
 import { BeachController } from './controllers/beaches'
+import * as http from 'http'
 
 export class SetupServer extends Server {
+  private server?: http.Server
+
   constructor(private port = 3000) {
     super()
   }
@@ -38,5 +41,11 @@ export class SetupServer extends Server {
 
   public getApp(): Application {
     return this.app
+  }
+
+  public start(): void {
+    this.server = this.app.listen(this.port, () => {
+      console.log('Server listening on port: ' + this.port)
+    })
   }
 }

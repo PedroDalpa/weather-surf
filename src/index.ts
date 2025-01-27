@@ -1,5 +1,8 @@
-function main() {
-  console.log('teste')
-}
+import { SetupServer } from './server'
+;(async () => {
+  const server = new SetupServer()
 
-main()
+  await server.init()
+
+  server.start()
+})()
