@@ -1,4 +1,5 @@
 import { Controller, Post } from '@overnightjs/core'
+import { Beach } from '@src/models/beach'
 import { Request, Response } from 'express'
 
 @Controller('beaches')
@@ -8,8 +9,9 @@ export class BeachController {
     req: Request,
     res: Response
   ): Promise<void> {
-    const editedBody = { ...req.body, id: 'fake-id' }
+    const beach = new Beach(req.body)
+    const result = await beach.save()
 
-    res.status(201).send(editedBody)
+    res.status(201).send(result.toJSON())
   }
 }
