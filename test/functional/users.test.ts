@@ -1,4 +1,5 @@
 import { User } from '@src/models/user'
+import AuthService from '@src/services/auth'
 
 describe('Users functional tests', () => {
   beforeAll(async () => {
@@ -6,7 +7,7 @@ describe('Users functional tests', () => {
   })
 
   describe('When creating a new user', () => {
-    it('should successfully create a new user', async () => {
+    it('should successfully create a new user with encrypted password', async () => {
       const newUser = {
         name: 'John Doe',
         password: '1234',
@@ -17,8 +18,12 @@ describe('Users functional tests', () => {
         .post('/user')
         .send(newUser)
 
-      expect(body).toMatchObject(newUser)
+      expect(body).toMatchObject({ ...newUser, password: expect.any(String) })
       expect(status).toBe(201)
+      expect(body.password).not.toBe('123')
+      await expect(
+        AuthService.comparePassword(newUser.password, body.password)
+      ).resolves.toBeTruthy()
     })
 
     it('should return 409 when the email is already register', async () => {
