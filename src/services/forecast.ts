@@ -24,6 +24,7 @@ export class ForecastService {
     try {
       for (const beach of beaches) {
         const points = await this.stormGlass.fetchPoints(beach.lat, beach.lng)
+
         const enrichedBeachData = this.enrichBeachData(points, beach)
         pointsWithCorrectSources.push(...enrichedBeachData)
       }

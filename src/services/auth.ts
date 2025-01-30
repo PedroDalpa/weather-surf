@@ -2,8 +2,13 @@ import { scrypt } from 'crypto'
 import jwt from 'jsonwebtoken'
 import { promisify } from 'util'
 import config from 'config'
+import { User } from '@src/models/user'
 
 const scryptAsync = promisify(scrypt)
+
+export interface DecodedUser extends Omit<User, '_id'> {
+  id: string
+}
 
 export default class AuthService {
   public static async comparePassword(
@@ -25,5 +30,12 @@ export default class AuthService {
     return jwt.sign(payload, config.get('App.auth.key') as string, {
       expiresIn: config.get('App.auth.tokenExpiresIn'),
     })
+  }
+
+  public static decodeToken(token: string): DecodedUser {
+    return jwt.verify(
+      token,
+      config.get('App.auth.key') as string
+    ) as DecodedUser
   }
 }

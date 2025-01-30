@@ -2,7 +2,7 @@ import { User } from '@src/models/user'
 import AuthService from '@src/services/auth'
 
 describe('Users functional tests', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await User.deleteMany({})
   })
 
@@ -101,7 +101,7 @@ describe('Users functional tests', () => {
   })
 
   describe('When authenticating a user', () => {
-    it.only('should generate a token for a valid user', async () => {
+    it('should generate a token for a valid user', async () => {
       const newUser = {
         name: 'John Doe',
         password: '1234',

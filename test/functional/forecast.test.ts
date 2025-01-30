@@ -2,19 +2,46 @@ import { Beach, BeachPosition } from '@src/models/beach'
 import nock from 'nock'
 import stormGlassWeather3HoursFixture from '@test/fixtures/stormglass_weather_3_hours.json'
 import forecastResponseOneBeach from '@test/fixtures/api_forecast_response_one_beach.json'
+import { User } from '@src/models/user'
+import AuthService from '@src/services/auth'
+
+let token: string
+const defaultUser = {
+  email: 'john@gmail.com',
+  password: '12334',
+  name: 'john',
+}
 
 describe('Beach forecast functional tests', () => {
-  beforeEach(async () => {
+  beforeAll(async () => {
     await Beach.deleteMany({})
+    await User.deleteMany({})
+
+    const user = await new User(defaultUser).save()
+
     const defaultBeach = {
       lat: -33.792726,
       lng: 151.289824,
       name: 'Manly',
       position: BeachPosition.E,
+      user: user.id,
     }
+    await new Beach(defaultBeach).save()
 
-    const beach = new Beach(defaultBeach)
-    await beach.save()
+    const anotherUser = await new User({
+      ...defaultUser,
+      email: 'another@gmai.com',
+    }).save()
+    const anotherBeach = {
+      lat: -33.792726,
+      lng: 151.289824,
+      name: 'Teste',
+      position: BeachPosition.E,
+      user: anotherUser.id,
+    }
+    await new Beach(anotherBeach).save()
+
+    token = AuthService.generateToken(user.toJSON())
   })
 
   it('should return a forecast with just a few times', async () => {
@@ -34,7 +61,9 @@ describe('Beach forecast functional tests', () => {
       })
       .reply(200, stormGlassWeather3HoursFixture)
 
-    const { body, status } = await global.testRequest.get('/forecast')
+    const { body, status } = await global.testRequest
+      .get('/forecast')
+      .set('x-access-token', token)
     expect(status).toBe(200)
     expect(body).toEqual(forecastResponseOneBeach)
   })
@@ -55,7 +84,9 @@ describe('Beach forecast functional tests', () => {
       })
       .replyWithError({ error: 'Internal Server Error' })
 
-    const { status } = await global.testRequest.get('/forecast')
+    const { status } = await global.testRequest
+      .get('/forecast')
+      .set('x-access-token', token)
 
     expect(status).toBe(500)
   })
