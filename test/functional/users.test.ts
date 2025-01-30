@@ -99,4 +99,22 @@ describe('Users functional tests', () => {
       })
     })
   })
+
+  describe('When authenticating a user', () => {
+    it.only('should generate a token for a valid user', async () => {
+      const newUser = {
+        name: 'John Doe',
+        password: '1234',
+        email: 'johndoe@example.com',
+      }
+
+      await new User(newUser).save()
+
+      const { body, status } = await global.testRequest
+        .post('/user/auth')
+        .send({ email: newUser.email, password: newUser.password })
+      expect(body).toMatchObject({ token: expect.any(String) })
+      expect(status).toEqual(200)
+    })
+  })
 })
