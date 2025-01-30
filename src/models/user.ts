@@ -1,4 +1,5 @@
 import mongoose, { Model } from 'mongoose'
+import { CUSTOM_VALIDATION } from '.'
 
 export interface User {
   _id?: string
@@ -27,6 +28,15 @@ const schema = new mongoose.Schema<User>(
       },
     },
   }
+)
+
+schema.path('email').validate(
+  async (email: string) => {
+    const emailCount = await mongoose.models.User.countDocuments({ email })
+    return !emailCount
+  },
+  'already exist in the database.',
+  CUSTOM_VALIDATION.DUPLICATED
 )
 
 export const User: Model<User> = mongoose.model('User', schema)
